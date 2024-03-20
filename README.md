@@ -13,7 +13,9 @@ This project is designed to scrape data from the WallStreetBets subreddit using 
 
 ### Prerequisites
 
-Before running the scraper, you need to install the required Python libraries. You can do this by running the following command in your terminal:
+If you are running the code in VSCode, I would recommend starting a python virtual environment to run the code. To do so, press Ctrl+Shift+P and select "Python: Create Virtual Environment". Then, select the environment you would like to use, and install the dependencies.
+
+If not using a virtual environment, you can install the dependencies by using:
 
 ```
 pip install -r requirements.txt
@@ -26,6 +28,12 @@ This will install the following Python libraries:
 - praw
 - nltk
 - textblob
+
+First run the `Web_Scraper` to scrape the data from the subreddit.
+
+Then, run the `Data_Processor` to analyze the data and perform sentiment analysis.
+
+The data from the subreddit will be saved in the `wsb_posts.csv` file in the root directory.
 
 ## Project Structure
 
