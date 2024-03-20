@@ -1,6 +1,6 @@
 # Reddit Subreddit Scraper
 
-This project is a simple Python-based web scraper designed to fetch and analyze data from a specified subreddit. It uses the Reddit API to scrape posts, including details such as title, author, upvotes, and number of comments, and then performs basic data analysis on the collected data.
+This project is a simple Python-based web scraper designed to fetch and analyze data from a specified subreddit. It uses the Reddit API to scrape posts, including details such as title, author, upvotes, and number of comments.
 
 ## Getting Started
 
@@ -18,6 +18,7 @@ This will install the following Python libraries:
 - beautifulsoup4
 - requests
 - pandas
+- praw
 
 ### Configuration
 
