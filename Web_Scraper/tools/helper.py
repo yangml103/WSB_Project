@@ -5,7 +5,9 @@ import re
 from pathlib import Path
 import pandas as pd
 
-
+"""
+Helper Functions for Web Scraper
+"""
 
 def initialize_reddit():
     """Initialize and return a Reddit instance using PRAW."""

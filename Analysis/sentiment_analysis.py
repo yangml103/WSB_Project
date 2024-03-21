@@ -5,6 +5,11 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from pathlib import Path
 from tools.helper import save_sentiment_analysis_results
 
+"""
+Sentiment Analysis - Main File
+"""
+
+
 nltk.download('vader_lexicon')
 
 df_original = pd.read_csv('wsb_posts.csv')

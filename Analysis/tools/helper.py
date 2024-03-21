@@ -2,7 +2,9 @@ import pandas as pd
 from pathlib import Path
 import logging
 
-
+"""
+Helper Functions for Analysis
+"""
 
 def save_sentiment_analysis_results(df, file_path):
     """
