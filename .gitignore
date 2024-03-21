@@ -4,5 +4,6 @@ wsb_posts.csv
 __pycache__
 .venv
 wsb_post.csv
+.vscode/
 
 
