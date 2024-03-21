@@ -1,12 +1,25 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+import matplotlib as plt
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 
 nltk.download('vader_lexicon')
 
+df = pd.read_csv('wsb_posts.csv')
 
+sia = SentimentIntensityAnalyzer()
+
+# Assuming the column with comments is named 'comments'
+df['sentiments'] = df['Top Comments'].apply(lambda x: sia.polarity_scores(x))
+df['compound'] = df['sentiments'].apply(lambda x: x['compound'])
+
+# Determine sentiment category based on compound score
+df['sentiment_type'] = df['compound'].apply(lambda x: 'Positive' if x > 0 else ('Negative' if x < 0 else 'Neutral'))
+
+print(df[['Title', 'sentiment_type']])
+
+
+"""
 # For demonstration, let's create a simple DataFrame
 df = pd.DataFrame({'comments': ['I love this!', 'This is terrible.', 'Absolutely fantastic!', 'Not good, not bad.']})
 
@@ -22,7 +35,7 @@ df['sentiment_type'] = df['compound'].apply(lambda x: 'Positive' if x > 0 else (
 print(df[['comments', 'sentiment_type']])
 
 
-"""
+
 # Load the dataset
 df = pd.read_csv('wsb_posts.csv')
 
