@@ -1,9 +1,8 @@
 config.py
 request_token.py
-wsb_posts.csv
 __pycache__
 .venv
-wsb_post.csv
 .vscode/
-
+next_steps.txt
+scraped_wsb_posts.csv
 
