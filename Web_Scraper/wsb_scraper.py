@@ -14,13 +14,13 @@ def initialize_reddit():
     return reddit
 
 
-def fetch_posts(subreddit_name, limit=15):
+def fetch_posts(subreddit_name, limit=5):
     """Fetch posts from a given subreddit."""
     reddit = initialize_reddit()
     subreddit = reddit.subreddit(subreddit_name)
     return subreddit.hot(limit=limit)
 
-def fetch_top_comments(post, limit=10):
+def fetch_top_comments(post, limit=5):
     """Fetch top comments from a given post."""
     post.comments.replace_more(limit=0) # Don't include replies to comments
     top_comments = [comment.body for comment in post.comments.list()[:limit]]
@@ -28,7 +28,13 @@ def fetch_top_comments(post, limit=10):
     pattern = re.compile(
         r"(\*\*User Report\*\*.*?Account Age.*?years.*?\[.*?\]\(http://discord\.gg/wsbverse\))|"
         r"(!\[img\]\(emote\|t5_2th52\|\d+\))|"
-        r"(https?://preview\.redd\.it/[\w./?=&-]+)",
+        r"(https?://preview\.redd\.it/[\w./?=&-]+)|"
+        r"\*\*User Report\*\*\|.*?\n|"    # Matches the beginning of the table header
+        r".*?\n|"  # Matches the table header separator
+        r"\*\*Total Submissions\*\* \| \d+ \| \*\*First Seen In WSB\*\* \| \d+ year[s]? ago\n|"  # Matches the first row of the table
+        r"\*\*Total Comments\*\* \| \d+ \| \*\*Previous Best DD\*\* \|.*?\n|"  # Matches the second row of the table
+        r"\*\*Account Age\*\* \| \d+ year[s]? \| \| \n|"  # Matches the third row of the table
+        r"\[\*\*Join WSB Discord\*\*\]\(http://discord\.gg/wsbverse\)",  # Matches the Discord link
         re.DOTALL
     )
 
