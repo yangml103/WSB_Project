@@ -6,4 +6,5 @@ __pycache__
 wsb_post.csv
 .vscode/
 next_steps.txt
+scraped_wsb_posts.csv
 

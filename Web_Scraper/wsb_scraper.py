@@ -42,7 +42,7 @@ def fetch_top_comments(post, limit=5):
     cleaned_comments = [re.sub(pattern, '', comment) for comment in top_comments]
     
     return cleaned_comments 
-def save_posts_to_csv(posts, filename='wsb_posts.csv'):
+def save_posts_to_csv(posts, filename='scraped_wsb_posts.csv'):
     """Save posts and their top comments to a CSV file."""
     with open(filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)

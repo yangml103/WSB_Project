@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib as plt
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
+from pathlib import Path
+from tools.helper import save_sentiment_analysis_results
 
 nltk.download('vader_lexicon')
 
@@ -19,6 +21,8 @@ df_copy['sentiment_type'] = df_copy['compound'].apply(lambda x: 'Positive' if x 
 
 print(df_copy[['Title', 'sentiment_type']])
 
-df_copy[['Title', 'sentiment_type']].to_csv('sentiment_analysis_results.csv', index=False)
+# Function located in tools/helper.py 
+save_sentiment_analysis_results(df_copy, 'sentiment_analysis_results.csv') 
+
 
 # TODO:
