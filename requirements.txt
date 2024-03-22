@@ -6,3 +6,4 @@ nltk==3.7
 textblob==0.17.1
 seaborn==0.13.2
 matplotlib==3.8.3
+config==0.5.1
