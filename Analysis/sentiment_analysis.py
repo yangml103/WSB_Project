@@ -12,7 +12,7 @@ Sentiment Analysis - Main File
 
 nltk.download('vader_lexicon')
 
-df_original = pd.read_csv('wsb_posts.csv')
+df_original = pd.read_csv('scraped_wsb_posts.csv')
 df_copy = df_original.copy()
 
 sia = SentimentIntensityAnalyzer()
@@ -30,4 +30,6 @@ print(df_copy[['Title', 'sentiment_type']])
 save_sentiment_analysis_results(df_copy, 'sentiment_analysis_results.csv') 
 
 
-# TODO:
+# TODO: Isolate company names in sentiment_analysis_results and compare to actual stock performance
+
+
