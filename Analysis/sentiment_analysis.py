@@ -33,13 +33,13 @@ def analyze_sentiment_in_file(file_path):
     # Construct the result file path to save in the 'sentiment_analysis_results' folder with the desired name format
     result_file_name = f"sentiment_analysis_results_for_scraped_data_{date_str}.csv"
     result_file_path = Path('sentiment_analysis_results') / result_file_name
-    print(f'{file_path.name},{file_path.stem},{file_path.suffix}')
     print(f"Analysis complete. Results saved to {result_file_path}")
     save_sentiment_analysis_results(df, result_file_path) 
 
 
 def main():
-    # Define the directory containing the CSV files
+    # Define the directory containing the CSV files 
+    # CHANGE IF YOU HAVE A DIFFERENT DIRECTORY NAME 
     directory_path = Path('scraped_posts')
     
     # Iterate through each CSV file in the directory

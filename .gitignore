@@ -8,4 +8,6 @@ scraped_wsb_posts.csv
 *.csv
 scraped_posts/
 sentiment_analysis_results/
-
+actual_stock_performance_analysis/
+analysis/test_AlphaVantage_API.py
+analysis/test_Alpha_API.py
