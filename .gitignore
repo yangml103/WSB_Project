@@ -5,4 +5,7 @@ __pycache__
 .vscode/
 next_steps.txt
 scraped_wsb_posts.csv
+*.csv
+scraped_posts/
+sentiment_analysis_results/
 
