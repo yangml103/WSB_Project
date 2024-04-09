@@ -118,6 +118,7 @@ def process_titles_from_csv(csv_file_path):
         accuracy = 100  
 
     results.append([f"Match count: {match_count} No match count: {no_match_count}, Accuracy = {accuracy}", ])    
+    
     # Ensure the directory exists
     folder_path = Path('actual_stock_performance_analysis')
     folder_path.mkdir(parents=True, exist_ok=True)  # This creates the directory if it does not exist
