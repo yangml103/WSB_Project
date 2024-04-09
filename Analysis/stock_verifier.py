@@ -4,6 +4,7 @@ import requests
 import config
 import csv
 from pathlib import Path
+import string
 
 # Note API limit is 25 per day
 
@@ -28,12 +29,17 @@ tickers, company_names = load_tickers_and_companies('data/ticker_security.csv')
 
 def getTickerandCompany(title):
     """Pass in the title of the post and return the ticker and company name"""
+    ticker, company = None,None
     if "$" in title:
         cleaned_string = title.split(" ")
-        ticker, company = None,None
+        # Check if 's exists in the word and remove it
+        cleaned_string = [word.replace("'s", "") for word in cleaned_string]
+        # Remove punctuation from each word in cleaned_string
+        cleaned_string = [''.join(char for char in word if char not in string.punctuation).replace("'s", "") for word in cleaned_string]
         for word in cleaned_string:
-            if '$' in word:
-                ticker = word.replace("$", "")
+
+            if word in tickers:
+                ticker = word
                 company = company_names[tickers.index(ticker)]
                 break
             if word in company_names:
@@ -42,7 +48,10 @@ def getTickerandCompany(title):
                 break
     else:
         cleaned_string = title.split(" ")
-        ticker, company = None,None
+        # Check if 's exists in the word and remove it
+        cleaned_string = [word.replace("'s", "") for word in cleaned_string]
+        # Remove punctuation from each word in cleaned_string
+        cleaned_string = [''.join(char for char in word if char not in string.punctuation) for word in cleaned_string]
         for word in cleaned_string:
             if word in company_names:
                 company = word
@@ -53,6 +62,7 @@ def getTickerandCompany(title):
                 company = company_names[tickers.index(ticker)]
                 break
     return ticker, company 
+
 
 def process_titles_from_csv(csv_file_path):
     """Process titles from a CSV file to find and print tickers, and save the results to a file."""
@@ -101,7 +111,13 @@ def process_titles_from_csv(csv_file_path):
             except Exception as ex:
                 print(f"Error processing {title}", ex)
                 results.append([title, "N/A", "N/A", "N/A", sentiment_type, "Ticker not found"])
-    results.append([f"Match count: {match_count}", f"No match count: {no_match_count}"])
+
+    if no_match_count > 0:
+        accuracy = (match_count / no_match_count) * 100
+    else:
+        accuracy = 100  
+
+    results.append([f"Match count: {match_count} No match count: {no_match_count}, Accuracy = {accuracy}", ])    
     # Ensure the directory exists
     folder_path = Path('actual_stock_performance_analysis')
     folder_path.mkdir(parents=True, exist_ok=True)  # This creates the directory if it does not exist

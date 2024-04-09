@@ -86,6 +86,11 @@ def save_posts_to_csv(posts, filename=None):
     directory_path = Path('scraped_posts')
     full_path = directory_path / filename
 
+    # Create the directory if it does not exist
+    if not directory_path.exists():
+        directory_path.mkdir(parents=True, exist_ok=True)
+
+
     # Prepare data for comparison
     new_data = []
     for post_tuple in posts:

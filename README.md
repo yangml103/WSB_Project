@@ -29,11 +29,19 @@ This will install the following Python libraries:
 - nltk
 - textblob
 
-First run the `Web_Scraper` to scrape the data from the subreddit.
+After making sure you've created a `config.py` file following the format in `config_example.py`:
 
-Then, run the `Data_Processor` to analyze the data and perform sentiment analysis.
+First run the `wsb_scraper.py` to scrape the data from the subreddit.
 
-The data from the subreddit will be saved in the `wsb_posts.csv` file in the root directory.
+Then, run the `sentiment_analysis.py` to analyze the data and perform sentiment analysis.
+
+Finally, run `stock_verifier.py` to verify the sentiment of the posts against the stock price.
+
+The data from the subreddit will be saved in the `scraped_posts` directory.
+
+The results of the sentiment analysis will be saved in the `sentiment_analysis_results` directory.
+
+The results of the stock verification will be saved in the `actual_stock_performance_analysis` directory.
 
 ## Project Structure
 
