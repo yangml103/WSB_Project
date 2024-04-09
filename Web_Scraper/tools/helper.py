@@ -4,6 +4,8 @@ import csv
 import re
 from pathlib import Path
 import pandas as pd
+from datetime import datetime
+from pathlib import Path
 
 """
 Helper Functions for Web Scraper
@@ -22,14 +24,14 @@ ticker_data = pd.read_csv('data/ticker_security.csv')
 tickers = ticker_data.iloc[:,0].tolist()
 company_names = ticker_data.iloc[:,1].tolist()
 
-def fetch_posts(subreddit_name, limit=25):
+def fetch_posts(subreddit_name, limit=50):
     """Fetch posts from a given subreddit.
     Limit is the number of posts to fetch
     """
     reddit = initialize_reddit()
     subreddit = reddit.subreddit(subreddit_name)
     filtered_posts = []
-
+    
     for post in subreddit.hot(limit=limit):
         post_title = post.title.lower()
         post_body = post.selftext.lower()
@@ -73,8 +75,22 @@ def fetch_top_comments(post, limit=5):
     
     return cleaned_comments 
 
-def save_posts_to_csv(posts, filename='scraped_wsb_posts.csv'):
+def save_posts_to_csv(posts, filename=None):
     """Save posts and their top comments to a CSV file if the content has changed."""
+
+    # Generate filename with today's date if not provided
+    if filename is None:
+        today = datetime.now().strftime("%Y-%m-%d")
+        filename = f'scraped_wsb_posts_{today}.csv'
+    
+    directory_path = Path('scraped_posts')
+    full_path = directory_path / filename
+
+    # Create the directory if it does not exist
+    if not directory_path.exists():
+        directory_path.mkdir(parents=True, exist_ok=True)
+
+
     # Prepare data for comparison
     new_data = []
     for post_tuple in posts:
@@ -87,14 +103,14 @@ def save_posts_to_csv(posts, filename='scraped_wsb_posts.csv'):
     
     new_df = pd.DataFrame(new_data, columns=['Title', 'URL', 'Top Comments', 'Matching Tickers', 'Matching Companies'])
     
-    if Path(filename).exists():
-        existing_df = pd.read_csv(filename)
+    if full_path.exists():
+        existing_df = pd.read_csv(full_path)
         if not new_df.equals(existing_df):
-            new_df.to_csv(filename, index=False, encoding='utf-8')
+            new_df.to_csv(full_path, index=False, encoding='utf-8')
             print("Updated the CSV file with new data.")
         else:
             print("The existing CSV file already contains the same data. No update needed.")
     else:
-        new_df.to_csv(filename, index=False, encoding='utf-8')
+        new_df.to_csv(full_path, index=False, encoding='utf-8')
         print("Created a new CSV file with the data.")
 

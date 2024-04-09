@@ -3,17 +3,12 @@ import matplotlib as plt
 import requests
 import config
 import csv
-
-
-# Load the ticker_security.csv into a DataFrame
-ticker_security_df = pd.read_csv('data/ticker_security.csv')
-df_original = pd.read_csv('sentiment_analysis_results.csv')
+from pathlib import Path
+import string
 
 # Note API limit is 25 per day
 
 alpha_vantage_api_key = config.ALPHA_VANTAGE_API_KEY
-
-
 
 def load_tickers_and_companies(csv_file_path):
     """Load tickers and company names from a CSV file into lists."""
@@ -29,19 +24,22 @@ def load_tickers_and_companies(csv_file_path):
     
     return tickers, company_names
 
-# Example usage
+# Load tickers and company names 
 tickers, company_names = load_tickers_and_companies('data/ticker_security.csv')
-#print("Tickers:", tickers)
-#print("Company Names:", company_names)
 
 def getTickerandCompany(title):
     """Pass in the title of the post and return the ticker and company name"""
+    ticker, company = None,None
     if "$" in title:
         cleaned_string = title.split(" ")
-        ticker, company = None,None
+        # Check if 's exists in the word and remove it
+        cleaned_string = [word.replace("'s", "") for word in cleaned_string]
+        # Remove punctuation from each word in cleaned_string
+        cleaned_string = [''.join(char for char in word if char not in string.punctuation).replace("'s", "") for word in cleaned_string]
         for word in cleaned_string:
-            if '$' in word:
-                ticker = word.replace("$", "")
+
+            if word in tickers:
+                ticker = word
                 company = company_names[tickers.index(ticker)]
                 break
             if word in company_names:
@@ -50,7 +48,10 @@ def getTickerandCompany(title):
                 break
     else:
         cleaned_string = title.split(" ")
-        ticker, company = None,None
+        # Check if 's exists in the word and remove it
+        cleaned_string = [word.replace("'s", "") for word in cleaned_string]
+        # Remove punctuation from each word in cleaned_string
+        cleaned_string = [''.join(char for char in word if char not in string.punctuation) for word in cleaned_string]
         for word in cleaned_string:
             if word in company_names:
                 company = word
@@ -62,56 +63,81 @@ def getTickerandCompany(title):
                 break
     return ticker, company 
 
+
 def process_titles_from_csv(csv_file_path):
-    """Process titles from a CSV file to find and print tickers."""
-    # Open the CSV file for reading
+    """Process titles from a CSV file to find and print tickers, and save the results to a file."""
+    results = []  # Initialize an empty list to store results
+    match_count = 0 # Count the number of matches
+    no_match_count = 0 # Count the number of no matches
+
     with open(csv_file_path, mode='r', encoding='utf-8') as file:
-        # Create a CSV reader object
         csv_reader = csv.reader(file)
+        next(csv_reader, None)  # Skip the header row
         
-        # Skip the header row
-        next(csv_reader, None)
-        
-        # Iterate through each row in the CSV
         for row in csv_reader:
-            # Each row is a list where the first item is the title and the second is the sentiment_type
             title = row[0]
             sentiment_type = row[1]
-            #print(f"Title: {title}, Sentiment: {sentiment_type}")
             try:
                 ticker, company = getTickerandCompany(title)
-                print(ticker, company)
-
-                # Access stock market API to get closing value this month and opening value last month
+                print(f"Ticker: {ticker}, Company: {company}")
                 url = f'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol={ticker}&apikey={alpha_vantage_api_key}'
                 r = requests.get(url)
                 data = r.json()
                 keys = list(data['Monthly Time Series'].keys())
                 current_month = keys[0]
                 prev_month = keys[1]
-                current_month_value = data['Monthly Time Series'][current_month]['4. close'] # closing value this month
-                prev_month_value = data['Monthly Time Series'][prev_month]['1. open'] # opening value this month
-                #print("Current: "+current_month_value)
-                #print("Previous: "+prev_month_value)
-                value_change = (int(prev_month_value) - int(current_month_value)) 
-                #print("Change:",value_change)
+                current_month_value = data['Monthly Time Series'][current_month]['4. close']
+                prev_month_value = data['Monthly Time Series'][prev_month]['1. open']
+                value_change = (float(prev_month_value) - float(current_month_value))
+                
                 if value_change > 0:
-                    print(f"{company} is up {value_change}, sentiment: {sentiment_type}")
-                    if sentiment_type == "positive":
-                        print(f"Sentiment matched company performance")
+                    result = f"{company} is up {value_change}, sentiment: {sentiment_type}"
+                    if sentiment_type == "Positive":
+                        result += " | Sentiment matched company performance"
+                        match_count += 1
                     else:
-                        print(f"Sentiment did not match company performance")
+                        result += " | Sentiment did not match company performance"
+                        no_match_count += 1
                 else:
-                    print(f"{company} is down {value_change}, sentiment: {sentiment_type}")
-                    if sentiment_type == "negative":
-                        print(f"Sentiment matched company performance")
+                    result = f"{company} is down {value_change}, sentiment: {sentiment_type}"
+                    if sentiment_type == "Negative":
+                        result += " | Sentiment matched company performance"
+                        match_count += 1
                     else:
-                        print(f"Sentiment did not match company performance")
-            except:
-                print(f"{title} ticker not found")
+                        result += " | Sentiment did not match company performance"
+                        no_match_count += 1
+                
+                results.append([title, ticker, company, value_change, sentiment_type, result])
+            except Exception as ex:
+                print(f"Error processing {title}", ex)
+                results.append([title, "N/A", "N/A", "N/A", sentiment_type, "Ticker not found"])
+
+    if no_match_count > 0:
+        accuracy = (match_count / no_match_count) * 100
+    else:
+        accuracy = 100  
+
+    results.append([f"Match count: {match_count} No match count: {no_match_count}, Accuracy = {accuracy}", ])    
+    
+    # Ensure the directory exists
+    folder_path = Path('actual_stock_performance_analysis')
+    folder_path.mkdir(parents=True, exist_ok=True)  # This creates the directory if it does not exist
+    
+    # Define your output file name and path
+    output_file_name = f'analysis_results_for_{Path(csv_file_path).stem}.csv'
+    output_file_path = folder_path / output_file_name
+    
+    with open(output_file_path, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Title', 'Ticker', 'Company', 'Value Change', 'Sentiment Type', 'Result'])  # Write header
+        writer.writerows(results)  # Write the results
+    
+    print(f"Analysis complete. Results saved to {output_file_path}")
+
 
 # Example usage
-csv_file_path = 'sentiment_analysis_results.csv'
+# Change file path if your folder name/filename is different
+csv_file_path = 'sentiment_analysis_results/sentiment_analysis_results_for_scraped_data_2024-04-09.csv'
 process_titles_from_csv(csv_file_path)
 
 
