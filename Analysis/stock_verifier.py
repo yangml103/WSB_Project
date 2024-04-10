@@ -113,7 +113,7 @@ def process_titles_from_csv(csv_file_path):
                 results.append([title, "N/A", "N/A", "N/A", sentiment_type, "Ticker not found"])
 
     if no_match_count > 0:
-        accuracy = (match_count / no_match_count) * 100
+        accuracy = (match_count / (match_count + no_match_count)) * 100
     else:
         accuracy = 100  
 
@@ -137,7 +137,7 @@ def process_titles_from_csv(csv_file_path):
 
 # Example usage
 # Change file path if your folder name/filename is different
-csv_file_path = 'sentiment_analysis_results/sentiment_analysis_results_for_scraped_data_2024-04-09.csv'
+csv_file_path = 'sentiment_analysis_results/sentiment_analysis_results_for_scraped_data_2024-04-10.csv'
 process_titles_from_csv(csv_file_path)
 
 

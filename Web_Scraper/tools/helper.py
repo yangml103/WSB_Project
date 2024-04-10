@@ -24,7 +24,7 @@ ticker_data = pd.read_csv('data/ticker_security.csv')
 tickers = ticker_data.iloc[:,0].tolist()
 company_names = ticker_data.iloc[:,1].tolist()
 
-def fetch_posts(subreddit_name, limit=50):
+def fetch_posts(subreddit_name, limit=80):
     """Fetch posts from a given subreddit.
     Limit is the number of posts to fetch
     """
@@ -50,7 +50,7 @@ def fetch_posts(subreddit_name, limit=50):
         
     return filtered_posts
 
-def fetch_top_comments(post, limit=5):
+def fetch_top_comments(post, limit=10):
     """Fetch top comments from a given post.
     Limit is the number of comments to fetch
     """
