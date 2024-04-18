@@ -4,7 +4,7 @@ import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 from pathlib import Path
 from tools.helper import save_sentiment_analysis_results
-from datetime import datetime
+
 
 """
 Sentiment Analysis - Main File
