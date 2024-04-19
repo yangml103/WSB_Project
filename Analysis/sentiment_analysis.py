@@ -19,7 +19,7 @@ def analyze_sentiment_in_file(file_path):
     df = pd.read_csv(file_path)
     
     # Assuming the column with comments is named 'Top Comments'
-    df['sentiments'] = df['Top Comments'].apply(lambda x: sia.polarity_scores(x))
+    df['sentiments'] = df['Top Comments'].apply(lambda x: sia.polarity_scores(str(x)))
     df['compound'] = df['sentiments'].apply(lambda x: x['compound'])
     
     # Determine sentiment category based on compound score
@@ -41,11 +41,14 @@ def main():
     # Define the directory containing the CSV files 
     # CHANGE IF YOU HAVE A DIFFERENT DIRECTORY NAME 
     directory_path = Path('scraped_posts')
+    result_file_path = f"sentiment_analysis_results_for_scraped_data_"
     
     # Iterate through each CSV file in the directory
     for file_path in directory_path.glob('*.csv'):
-        print(f"Analyzing {file_path.name}...")
-        analyze_sentiment_in_file(file_path)
+        result_file_check = Path('sentiment_analysis_results') / f"sentiment_analysis_results_for_scraped_data_{file_path.stem.split('_')[-1]}.csv"
+        if not result_file_check.exists():
+            print(f"Analyzing {file_path.name}...")
+            analyze_sentiment_in_file(file_path)
 
 if __name__ == "__main__":
     main()
