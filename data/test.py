@@ -14,3 +14,4 @@ def isolate_ticker_security(input_file, output_file):
 
 # Call the function with the input and output file paths
 #isolate_ticker_security('data/s_and_p_companies.csv', 'data/ticker_security.csv')
+
