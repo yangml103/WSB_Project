@@ -137,7 +137,7 @@ def process_titles_from_csv(csv_file_path):
 
 # Example usage
 # Change file path if your folder name/filename is different
-csv_file_path = 'sentiment_analysis_results/sentiment_analysis_results_for_scraped_data_2024-04-19.csv'
+csv_file_path = 'sentiment_analysis_results/sentiment_analysis_results_for_scraped_data_2024-04-9.csv'
 process_titles_from_csv(csv_file_path)
 
 
